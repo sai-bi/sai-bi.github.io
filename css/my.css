@@ -1,0 +1,103 @@
+.year{
+	font-weight: bold;
+	font-size: 16px;
+}
+
+.position{
+	font-weight: bold;
+	font-size: 16px;
+	font-family: Montserrat,"Helvetica Neue",Helvetica,Arial,sans-serif;
+}
+
+/*.col-md-4 a{
+	color: white;
+	hover:; 
+}
+
+.col-md-4 a:hover{
+	color: #fed136;
+}*/
+
+.pubt {
+  font-size: 22px;
+  font-weight:400;
+  /*color: #000;*/
+}
+
+
+/*@media (max-width: 768px) {
+  .pubt {
+    text-align: center;
+    margin-top: 10px;
+    margin-bottom: 10px;
+  }
+  .pubd {
+    text-align: justify;
+  }
+}*/
+.pubd {  
+  font-size: 18px;
+  font-weight: 300;
+}
+.pubimg {
+  /*text-align: center;*/
+}
+.pubimg img {
+  width: 100%;
+  border-radius: 0.5em;
+}
+.puba {
+  font-size: 18px;
+  color: #900;
+}
+.pubv {
+  color: #090;
+  font-size: 18px;
+}
+.publ {
+  padding-top: 10px;
+}
+.publ li {
+  border: 1px solid #CCC;
+  padding: 5px;
+  margin: 5px 2px;
+  display: inline-block;
+}
+.pubwrap {
+  padding-bottom: 20px;
+  margin-bottom: 50px;
+  /*border-bottom: 1px solid #DDD;*/
+}
+.pubwrap:last-child {
+  border-bottom: none;
+}
+.pub {
+}
+
+.publ a{
+    color: #428bca;
+}
+
+.descrip{
+	font-size: 13pt;
+}
+
+.col-md-5{
+  width: 30%;
+}
+
+.col-md-7{
+  width: 70%;
+}
+
+.me_text{
+  width: 70%;
+}
+
+.me_figure{
+  width: 20%;
+}
+
+
+
+
