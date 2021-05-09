@@ -1,0 +1,183 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<head>
+	<base target="_blank">
+	<meta name="keywords" content="" />
+	<meta name="description" content="" />
+	<meta http-equiv="content-type" content="text/html; charset=utf-8" />
+	<title>Sai's personal webpage</title>
+	<link href="../../css/bootstrap.min.css" rel="stylesheet">
+	<link href="http://fonts.googleapis.com/css?family=Arvo" rel="stylesheet" type="text/css" />
+	<link rel="stylesheet" type="text/css" href="../../css/style.css" />
+	<!-- <link rel="stylesheet" type="text/css" href="../css/my.css"> -->
+	<link rel="stylesheet" type="text/css" href="../css/project.css">
+	<!-- <link href="css/agency.css" rel="stylesheet"> -->
+</head>
+
+<body>
+	<div id="bg">
+		<div id="outer">
+
+			<div id="main">
+				<div id="content">
+					<div class="box">
+						<div id="conference">
+							SIGGRAPH 2021
+						</div>
+						<div id="title">
+							Deep Relightable Appearance Models for Animatable Faces
+						</div>
+						<div id="project_author">
+							<ul class="list-inline">
+								<li class="author"> <a href="../../index.html">Sai Bi </a>
+									<sup>1</sup>
+								</li>
+								<li class="author"> <a href="https://stephenlombardi.github.io/">Stephen Lombardi</a>
+									<sup>2 *</sup>
+								</li>
+								<li class="author"> <a href="http://www-scf.usc.edu/~saitos/">Shunsuke Saito</a>
+									<sup>2 *</sup>
+								</li>
+								<li class="author"> <a href="https://scholar.google.com/citations?user=7aabHgsAAAAJ">Tomas Simon</a>
+									<sup>2</sup>
+								</li>
+								<li class="author"> <a href="https://scholar.google.com.tw/citations?hl=zh-TW&user=sFQD3k4AAAAJ">Shih-En Wei</a>
+									<sup>2</sup>
+								</li>
+						
+								<li class="author"> <a href="http://www.kevynmc.com/">Kevyn McPhail</a>
+									<sup>2</sup>
+								</li>
+								<li class="author"> <a href="http://cseweb.ucsd.edu/~ravir/">Ravi Ramamoorthi</a>
+									<sup>1</sup>
+								</li>
+						
+								<li class="author"> <a href="http://www.cs.cmu.edu/~yaser/">Yaser Sheikh</a>
+									<sup>2</sup>
+								</li>
+								<li class="author"> <a href="https://scholar.google.com/citations?user=ss-IvjMAAAAJ&hl=en">Jason Saragih</a>
+									<sup>2</sup>
+								</li>
+							</ul>
+						</div>
+						<div class="institute">
+							<ul class="list-inline">
+								<li> <sup>1</sup> University of California, San Diego
+								</li>
+								<li> <sup>2</sup> Facebook Reality Labs
+								</li>
+							</ul>
+						</div>
+						
+					</div>
+
+					<div class="box">
+						<div class="sec_title">
+							Abstract
+						</div>
+						<div class="teaser">
+							<img src="./teaser_v2.jpg" width="90%" />
+						</div>
+						<br />
+						<div class="abstract_text">
+							<div class="description" style="line-height:1.5">
+								We present a method for building high-fidelity
+								animatable 3D face models that can be posed and
+								rendered with novel lighting environments in
+								real-time. Our main insight is that relightable
+								models trained to produce an image lit from a
+								single light direction can generalize to natural
+								illumination conditions but are computationally
+								expensive to render. On the other hand,
+								efficient, high-fidelity face models trained
+								with point-light data do not generalize to novel
+								lighting conditions. We leverage the strengths
+								of each of these two approaches. We first train
+								an expensive but generalizable model on
+								point-light illuminations, and use it to
+								generate a training set of high-quality
+								synthetic face images under natural illumination
+								conditions. We then train an efficient model on
+								this augmented dataset, reducing the
+								generalization ability requirements. As the
+								efficacy of this approach hinges on the quality
+								of the synthetic data we can generate, we
+								present a study of lighting pattern combinations
+								for dynamic captures and evaluate their
+								suitability for learning generalizable
+								relightable models. Towards achieving the best
+								possible quality, we present a novel approach
+								for generating dynamic relightable faces that
+								exceeds state-of-the-art performance. Our method
+								is capable of capturing subtle lighting effects
+								and can even generate compelling near-field
+								relighting despite being trained exclusively
+								with far-field lighting data. Finally, we
+								motivate the utility of our model by animating
+								it with images captured from VR-headset mounted
+								cameras, demonstrating the first system for
+								face-driven interactions in VR that uses a
+								photorealistic relightable face model.
+							</div>
+						</div>
+					</div>
+
+					<div class="box">
+						<div class="sec_title">
+							Paper
+						</div>
+						<div class="teaser">
+							<a
+								href="https://drive.google.com/file/d/11cj0mdPlpO6_c1rfTeGp7I7j5mu7vtYf/view?usp=sharing">
+								<img src="./paper.png" />
+							</a>
+						</div>
+					</div>
+
+					<div class="box">
+						<div class="sec_title">
+							Video
+						</div>
+						<div class="video">
+							<iframe width="1062" height="600" src="https://www.youtube.com/embed/5YigyNvt4GE" title="YouTube video player"
+								frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+								allowfullscreen></iframe>
+						</div>
+					</div>
+
+
+
+					<div class="box" id="last_box">
+						<div class="sec_title">
+							Citation
+						</div>
+						<div style="margin:auto;">
+							<pre class="citation">
+@article{bi2021avatar,  
+    author = {Sai Bi, Stephen Lombardi, Shunsuke Saito, Tomas Simon, Shih-EnWei, Kevyn
+		McPhail, Ravi Ramamoorthi, Yaser Sheikh, and Jason Saragih}, 
+    title = {Deep Relightable Appearance Models for Animatable Faces}, 
+    journal = {ACM Trans. Graph. (Proc. SIGGRAPH)}, 
+    volume = {40}, 
+    number = {4}, 
+    year = {2021}, 
+    publisher = {ACM}, 
+}</pre>
+						</div>
+					</div>
+
+
+					<br class="clear" />
+				</div>
+				<br class="clear" />
+			</div>
+
+		</div>
+		<!-- <div id="copyright">
+			&copy; Sai Bi 2016
+		</div> -->
+	</div>
+</body>
+
+</html>

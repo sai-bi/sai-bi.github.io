@@ -2,37 +2,68 @@
 	/*margin: auto;*/
 	text-align: center;
 	font-family: Arvo, serif;
-	font-size: 30px;
-	font-weight: 700;
-	line-height: 50px;
+	font-family: 'Lato', Verdana, Helvetica, sans-serif;
+	font-size: 40px;
+	font-weight: 500;
+	line-height: 60px;
+	margin-bottom: 10px;
 }
 
 #conference{
 	text-align: center;
-	font-style: italic;
+	/* font-style: italic; */
 	font-size: 35px;
-	font-weight: 700;
+	/* font-weight: 700; */
 	line-height: 50px;
-	font-family: Arvo, serif;
+	/* font-family: Arvo, serif; */
+	font-family: 'Lato', Verdana, Helvetica, sans-serif;
+	color:#999999;
+	margin-bottom: 10px;
 }
 
 #project_author{
 	text-align: center;
-	font-style: italic;
-	font-size: 25px;
+	/* font-style: italic; */
+	/* font-size: 25px; */
 	/*font-weight: 700;*/
 	margin: 0 auto;
-	width: 60%;
-	line-height: 50px;
-	font-family: Arvo, serif;
+	width:  80%;
+	/* line-height: 50px; */
+	/* font-family: Arvo, serif; */
+	/* font-family: 'Lato', Verdana, Helvetica, sans-serif; */
+  	/* color: #900; */
 }
+
+.institute{
+	text-align: center;
+	margin: 0 auto;
+	width: 100%;
+	font-size: 20px;
+}
+
+.author{
+	font-size: 25px;
+	font-family: 'Lato', Verdana, Helvetica, sans-serif;
+  	color:#337ab7;
+}
+
+/* .author {
+	padding-left: 10px;
+	padding-right: 10px; */
+/* } */
+
+.author a {
+  	color:#337ab7;
+}
+
 
 .sec_title{
 	text-align: center;
 	font-size: 30px;
 	font-weight: 500;
 	color: #1a1a1a;
-	font-family: Arvo, serif;
+	/* font-family: Arvo, serif; */
+	font-family: 'Lato', Verdana, Helvetica, sans-serif;
 	margin-bottom: 30px;
 }
 
@@ -47,23 +78,25 @@
 	text-align: center;
 }
 .teaser img{
-	width: 90%
+	width: 100%
 }
 
 .abstract_text{
-	/*text-align: center;*/
-	width: 90%;
+	text-align: justify;
+	width: 100%;
 	margin: 0 auto;
+	font-size: 20px;
+
 }
 
 .div_cite{
-	width: 90%;
+	width: 100%;
 	margin: 0 auto;
 }
 
-.div_cite .citation{
+.citation{
 	/*margin: 0 auto;*/
-	font-size: 18px;
+	font-size: 20px;
 }
 
 .materials{
@@ -74,4 +107,21 @@
 .materials span{
     width: 500px;
     display: inline-block;
+}
+
+.supp {
+  /* color: #090; */
+  		color:#337ab7;
+	  padding: 20px;
+	  font-size:25px;
+}
+
+
+.video{
+	text-align: center;
+}
+
+.institute li {
+	margin-left: 10px;
+	margin-right: 10px;
 }

@@ -1,0 +1,158 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<head>
+	<base target="_blank">
+	<meta name="keywords" content="" />
+	<meta name="description" content="" />
+	<meta http-equiv="content-type" content="text/html; charset=utf-8" />
+	<title>Sai's personal webpage</title>
+	<link href="../../css/bootstrap.min.css" rel="stylesheet">
+	<link href="http://fonts.googleapis.com/css?family=Arvo" rel="stylesheet" type="text/css" />
+	<link rel="stylesheet" type="text/css" href="../../css/style.css" />
+	<!-- <link rel="stylesheet" type="text/css" href="../css/my.css"> -->
+	<link rel="stylesheet" type="text/css" href="../css/project.css">
+	<!-- <link href="css/agency.css" rel="stylesheet"> -->
+</head>
+
+<body>
+	<div id="bg">
+		<div id="outer">
+
+			<div id="main">
+				<div id="content">
+					<div class="box">
+						<div id="conference">
+							SIGGRAPH 2015
+						</div>
+						<div id="title">
+							An L1 Image Transform for Edge-Preserving Smoothing and
+							Scene-Level Intrinsic Decomposition
+						</div>
+						<div id="project_author">
+							<div class="col-md-4">
+								<a class="author" href="../../index.html">Sai Bi
+									<!-- <sup>1</sup> -->
+								</a>
+							</div>
+							<div class="author col-md-4">
+								<a class="author" href="http://i.cs.hku.hk/~xghan/"> Xiaoguang Han
+									<!-- <sup>1</sup> -->
+								</a>
+							</div>
+							<div class="author col-md-4">
+								<a class="author"  href="http://i.cs.hku.hk/~yzyu/">Yizhou Yu
+									<!-- <sup>1</sup> -->
+								</a>
+							</div>
+						</div>
+						<div class="institute col-md-8">
+							The University of Hong Kong
+						</div>
+
+						</div>
+		
+
+					<div class="box">
+						<div class="sec_title">
+							Abstract
+						</div>
+						<div class="teaser">
+							<img src="./siggraph2015.PNG" width="90%" />
+						</div>
+						<br />
+						<div class="abstract_text">
+							<div class="description" style="line-height:1.5">
+								Identifying sparse salient structures from dense pixels is a long-standing
+								problem in visual computing. Solutions to this problem
+								can benefit both image manipulation and understanding. In this paper,
+								we introduce an image transform based on the $L_1$ norm for
+								piecewise image flattening. This transform can effectively preserve
+								and sharpen salient edges and contours while eliminating insignificant
+								details, producing a nearly piecewise constant image with
+								sparse structures. A variant of this image transform can perform
+								edge-preserving smoothing more effectively than existing state-of-the-art
+								algorithms. We further present a new method for complex
+								scene-level intrinsic image decomposition. Our method relies on
+								the above image transform to suppress surface shading variations,
+								and perform probabilistic reflectance clustering on the flattened image
+								instead of the original input image to achieve higher accuracy.
+								Extensive testing on the <i>Intrinsic-Images-in-the-Wild</i> database indicates
+								our method can perform significantly better than existing
+								techniques both visually and numerically. The obtained intrinsic
+								images have been successfully used in two applications, surface retexturing and
+								3D object compositing in photographs.
+							</div>
+						</div>
+					</div>
+
+					<div class="box">
+						<div class="sec_title">
+							Paper
+						</div>
+						<div class="teaser">
+							<a
+								href="https://drive.google.com/file/d/1FrXjYSdWKpGUQUv4CKuZz7HyiPYQ1mmJ/view?usp=sharing">
+								<img src="./siggraph2015-snap.png" />
+							</a>
+						</div>
+					</div>
+
+					<div class="box">
+						<div class="sec_title">
+							Citation
+						</div>
+						<div style="margin:auto;">
+							<pre class="citation">
+@article{L1Intrinsic,  
+    author = {Sai Bi and Xiaoguang Han and Yizhou Yu}, 
+    title = {An $L_1$ Image Transform for Edge-Preserving Smoothing and 
+		Scene-Level Intrinsic Decomposition}, 
+    journal = {ACM Trans. Graph. (Proc. SIGGRAPH)}, 
+    volume = {34}, 
+    number = {4}, 
+    year = {2015}, 
+    publisher = {ACM}, 
+}</pre>
+						</div>
+					</div>
+
+					<div class="box" id="last_box">
+						<div class="sec_title">
+							Materials
+						</div>
+						<center>
+							<a href="https://drive.google.com/folderview?id=0B_bZKF86bTHLfm9sMjloS2JwV0h2NTJmMVBIUXdtV2loMjRzNk82WDZTOFdPamstaElRVzg&usp=sharing"
+								class="supp" target="_blank">
+								Our result (via Google Drive) 
+							</a>
+							<a href="http://pan.baidu.com/s/1qWBVAeo" class="supp" target="_blank">
+								Our result (via Baidu Pan)
+							</a>
+							<br/>	
+							<a href="https://drive.google.com/open?id=0B0tUTCaZBkcceFRLdDBqdk5sWE0" class="supp"
+								target="_blank">
+								Supplemental Materials (via Google Drive) 
+							</a>
+
+							<a href="https://github.com/soundsilence/L1Flattening" class="supp" target="_blank">
+								Source Code 
+							</a>
+							<br>
+						</center>
+					</div>
+
+
+					<br class="clear" />
+				</div>
+				<br class="clear" />
+			</div>
+
+		</div>
+		<!-- <div id="copyright">
+			&copy; Sai Bi 2016
+		</div> -->
+	</div>
+</body>
+
+</html>
