@@ -31,9 +31,33 @@
       window.dataLayer = window.dataLayer || [];
       function gtag(){dataLayer.push(arguments);}
       gtag('js', new Date());
-
       gtag('config', 'G-ZXDFJSYHWT');
     </script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <script>
+        window.onload = function() {
+                    var figure = $(".pubwrap");
+                    [].forEach.call(figure, function (item) {
+                            item.addEventListener('mouseover', hoverVideo, false);
+                            item.addEventListener('mouseout', outVideo, false);
+                    });
+
+                    function hoverVideo(e) {
+                        var temp = $(this).find('.paper_video');
+                        if(temp.length > 0) {
+                            temp[0].play();
+                        }
+                    }
+                   function outVideo(e) {
+                        var temp = $(this).find('.paper_video');
+                        if(temp.length > 0) {
+                            temp[0].pause();
+                        }
+                    }
+
+                };
+    </script>
+
 
 
 </head>
@@ -94,30 +118,57 @@
               Research
             </h2>
 
-       <!--      <div class="pubwrap"> -->
-              <!-- <div class="row"> -->
-                <!-- <div class="col-md-5"> -->
-                  <!-- <div class="pubimg"> -->
-                    <!-- <video class='paper_video' width="100%" playsinline="" autoplay="" loop="" preload="" muted=""> -->
-                        <!-- <source src="./img/cvpr22_nerfusion.mp4" type="video/mp4"> -->
-                    <!-- </video> -->
+            <div class="pubwrap">
+              <div class="row">
+                <div class="col-md-5">
+                    <video class='paper_video' width="100%" playsinline="" loop="" preload="" muted="">
+                        <source src="./img/arf.mp4" type="video/mp4">
+                    </video>
+                </div>
+                <div class="col-md-7">
+                  <div class="pub">
+                    <div class="pubt"> ARF: Artistic Radiance Fields </div>
+                    <div class="puba">                    
+                        Kai Zhang, Nick Kolkin, <b>Sai Bi</b>, Fujun Luan, Zexiang Xu, Eli Shechtman, Noah Snavely
+                    </div>
+                    <div class="pubv">arXiv 2022</div>
+                    <div>
+                      <a href='https://arxiv.org/abs/2206.06360'>Paper </a> |
+                      <a href="https://www.cs.cornell.edu/projects/arf/">
+                          Project page</a>
+                    
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
 
-                  <!-- </div> -->
-                <!-- </div> -->
-                <!-- <div class="col-md-7"> -->
-                  <!-- <div class="pub"> -->
-                    <!-- <div class="pubt"> Physically-based Editing of Indoor Scene Lighting from a Single Image </div> -->
-                    <!-- <div class="puba">                     -->
-                        <!-- Zhengqin Li, Jia Shi, <b>Sai Bi</b>, Rui Zhu, Kalyan Sunkavalli, Miloš Hašan, Zexiang Xu, Ravi Ramamoorthi, Manmohan Chandraker -->
-                    <!-- </div> -->
-                    <!-- <div class="pubv">arXiv 2022</div> -->
-                    <!-- <div> -->
-                      <!-- <a href='https://arxiv.org/abs/2205.09343'>Paper </a> | -->
-                    <!-- </div> -->
-                  <!-- </div> -->
-                <!-- </div> -->
-              <!-- </div> -->
-            <!-- </div> -->
+
+
+            <div class="pubwrap">
+              <div class="row">
+                <div class="col-md-5">
+                  <div class="pubimg">
+                        <img src="./img/light_editing.PNG">
+                  </div>
+                </div>
+                <div class="col-md-7">
+                  <div class="pub">
+                    <div class="pubt"> Physically-based Editing of Indoor Scene Lighting from a Single Image </div>
+                    <div class="puba">                    
+                        Zhengqin Li, Jia Shi, <b>Sai Bi</b>, Rui Zhu, Kalyan Sunkavalli, Miloš Hašan, Zexiang Xu, Ravi Ramamoorthi, Manmohan Chandraker
+                    </div>
+                    <div class="pubv">arXiv 2022</div>
+                    <div>
+                      <a href='https://arxiv.org/abs/2205.09343'>Paper </a> |
+                      <a href="https://drive.google.com/file/d/1IuMuJ4QyVGIWNhN_HhwOhyJuQ7Ud26b5/view">
+                          Video </a>
+                    
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
 
 
 
@@ -126,7 +177,7 @@
               <div class="row">
                 <div class="col-md-5">
                   <div class="pubimg">
-                    <video class='paper_video' width="100%" playsinline="" autoplay="" loop="" preload="" muted="">
+                    <video class='paper_video' width="100%" playsinline="" loop="" preload="" muted="">
                         <source src="./img/cvpr22_nerfusion.mp4" type="video/mp4">
                     </video>
 

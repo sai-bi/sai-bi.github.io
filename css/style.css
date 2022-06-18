@@ -47,7 +47,7 @@ img.top {
 }
 
 p {
-	margin-bottom: 1.75em;
+	margin-bottom: 0.7em;
 }
 
 .imageList {
@@ -59,7 +59,7 @@ p {
 }
 
 #bg {
-	background: url('images/highlight.png') top left repeat-x;
+	/* background: url('images/highlight.png') top left repeat-x; */
 	padding: 35px 0 65px 0;
 }
 
