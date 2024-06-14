@@ -35,27 +35,37 @@
     </script>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
     <script>
+        // window.onload = function() {
+        //             var figure = $(".pubwrap");
+        //             [].forEach.call(figure, function (item) {
+        //                     item.addEventListener('mouseover', hoverVideo, false);
+        //                     item.addEventListener('mouseout', outVideo, false);
+        //             });
+
+        //             function hoverVideo(e) {
+        //                 var temp = $(this).find('.paper_video');
+        //                 if(temp.length > 0) {
+        //                     temp[0].play();
+        //                 }
+        //             }
+        //            function outVideo(e) {
+        //                 var temp = $(this).find('.paper_video');
+        //                 if(temp.length > 0) {
+        //                     temp[0].pause();
+        //                 }
+        //             }
+
+        //         };
+
         window.onload = function() {
-                    var figure = $(".pubwrap");
-                    [].forEach.call(figure, function (item) {
-                            item.addEventListener('mouseover', hoverVideo, false);
-                            item.addEventListener('mouseout', outVideo, false);
-                    });
+          const videos = document.querySelectorAll('video');
+          videos.forEach(video => {
+            video.setAttribute('autoplay', true);
+            video.autoplay = true;
+            video.load();
+          });
+        };
 
-                    function hoverVideo(e) {
-                        var temp = $(this).find('.paper_video');
-                        if(temp.length > 0) {
-                            temp[0].play();
-                        }
-                    }
-                   function outVideo(e) {
-                        var temp = $(this).find('.paper_video');
-                        if(temp.length > 0) {
-                            temp[0].pause();
-                        }
-                    }
-
-                };
     </script>
 
 
@@ -106,19 +116,110 @@
                 If you are interested in a research internship at Adobe Research with me, 
                 please send me an email with your CV and research interests. 
                 </p>
-                Email: sbi-at-adobe-dot-com / saibifig-at-gmail-dot-com 
+                <span style="color: #090;"> <b>Email: </b> </span> sbi-at-adobe-dot-com / saibifig-at-gmail-dot-com 
 
+   
               </div>
               <div class="col-md-3">
                 <img src="./img/sai1.jpg" width="100%" style="border-radius:2%; margin-top: 35px;" />
               </div>
+
             </div>
+              <span style="color:#428bca"> 
+                    <b>News:</b>
+                </span>
+                <ul style="list-style-position: inside; ">
+                  <li>We are organizing a workshop on <a href="https://3dfm.github.io/">3D Foundation Models </a> 
+                    in CVPR 2024. Welcome to attend on June 18 at Summit 324.</li>
+
+                  <li>Our paper on <a href="https://lwwu2.github.io/nde/">Neural Directional Encoding</a> is selected as a highlight presentation at CVPR 2024.</li>
+                </ul>
           </div>
+
+
 
           <div id="box2" class="box">
             <h2>
-              Research
+              Selected publications
             </h2>
+
+
+<div class="pubwrap">
+  <div class="row">
+    <div class="col-md-5">
+      <video class='paper_video' width="100%" playsinline="" loop="" preload="" muted="" autoplay>
+        <source src="./img/gslrm.mp4" type="video/mp4">
+      </video>
+    </div>
+    <div class="col-md-7">
+      <div class="pub">
+        <div class="pubt"> GS-LRM: Large Reconstruction Model for 3D Gaussian Splatting </div>
+        <div class="puba">
+          Kai Zhang*, <b>Sai Bi*</b>, Hao Tan*, Yuanbo Xiangli, Nanxuan Zhao, Kalyan Sunkavalli, Zexiang Xu
+        </div>
+        <div class="pubv">arXiv 2024</div>
+        <div>
+          <a href='https://arxiv.org/abs/2404.19702'>Paper </a> |
+          <a href="https://sai-bi.github.io/project/gs-lrm/">
+            Project page</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<div class="pubwrap">
+  <div class="row">
+    <div class="col-md-5">
+      <video class='paper_video' width="100%" playsinline="" loop="" preload="" muted="">
+        <source src="./img/meshlrm.mp4" type="video/mp4">
+      </video>
+    </div>
+    <div class="col-md-7">
+      <div class="pub">
+        <div class="pubt"> MeshLRM: Large Reconstruction Model for High-Quality Meshes </div>
+        <div class="puba">
+           Xinyue Wei*, Kai Zhang*, <b>Sai Bi</b>,  Hao Tan, Fujun Luan, Valentin Deschaintre, Kalyan Sunkavalli, Hao Su, Zexiang Xu
+        </div>
+        <div class="pubv">arXiv 2024</div>
+        <div>
+          <a href='https://arxiv.org/abs/2404.12385'>Paper </a> |
+          <a href="https://sarahweiii.github.io/meshlrm/">
+            Project page</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+
+<div class="pubwrap">
+  <div class="row">
+    <div class="col-md-5" style="display: flex; justify-content: center;">
+      <video class='paper_video' width="60%" playsinline="" loop="" preload="" muted="" >
+        <source src="./img/nde.mp4" type="video/mp4">
+      </video>
+    </div>
+    <div class="col-md-7">
+      <div class="pub">
+        <div class="pubt"> Neural Directional Encoding for Efficient and Accurate View-Dependent Appearance Modeling </div>
+        <div class="puba">
+           Liwen Wu, <b>Sai Bi</b>,  Zexiang Xu, Fujun Luan, Kai Zhang, Iliyan Georgiev, Kalyan Sunkavalli, Ravi Ramamoorthi
+        </div>
+        <div class="pubv">CVPR 2024 (highlight)</div>
+        <div>
+          <a href='https://arxiv.org/abs/2405.14847'>Paper </a> |
+          <a href="https://lwwu2.github.io/nde/">
+            Project page</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
 
 <div class="pubwrap">
   <div class="row">
