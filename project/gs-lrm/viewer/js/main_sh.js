@@ -697,7 +697,7 @@ async function main() {
     throw new Error(req.status + " Unable to load " + req.url);
 
   // const rowLength = 3 * 4 + 3 * 4 + 4 + 4;
-  const rowLength = 3 * 4 + 3 + 3 * 4 + 45 * 4 + 8 * 4 + 2; // for our format
+  const rowLength = 3 * 4 + 3 + 3 * 4 + 72 * 4 + 8 * 4 + 2; // for our format
   const reader = req.body.getReader();
   let splatData = new Uint8Array(req.headers.get("content-length"));
 
