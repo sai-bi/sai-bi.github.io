@@ -36,6 +36,16 @@ let cameras = [
     }
 ];
 
+const sh_order = 3;
+let rowLength = 3 * 4 + 3 * 4 + 4 + 4 + ((sh_order+ 1)**2-1) * 4 * 4; 
+// originally its  ((sh_order+ 1)**2-1) * 3 * 4, we pad another another 4 bytes to make it easier to access in shader 
+
+// see generateTexture
+let float_per_row = rowLength / 4;
+float_per_row = float_per_row % 4 == 0 ? float_per_row : (Math.floor(float_per_row / 4) + 1) * 4;
+let byte_per_row = float_per_row * 4;
+
+
 
 function getProjectionMatrix(fx, fy, width, height) {
     const znear = 0.2;
@@ -176,9 +186,13 @@ function createWorker(self) {
   // XYZ - Scale (Float32)
   // RGBA - colors (uint8)
   // IJKL - quaternion/rot (uint8)
-  const sh_order = 3;
   // const rowLength = 3 * 4 + 3 * 4 + 4 + 4;
-  const rowLength = 3 * 4 + 3 * 4 + 4 + 4 + ((sh_order + 1)**2 - 1) * 3 * 4;
+  const sh_order = 3;
+  const rowLength = 3 * 4 + 3 * 4 + 4 + 4 + ((sh_order+ 1)**2-1) * 4 * 4;
+  var ori_float_per_row = rowLength / 4;
+  var ori_byte_per_row = rowLength;
+
+
   let lastProj = [];
   let depthIndex = new Uint32Array();
   let lastVertexCount = 0;
@@ -224,11 +238,24 @@ function createWorker(self) {
     const f_buffer = new Float32Array(buffer);
     const u_buffer = new Uint8Array(buffer);
 
-    var texwidth = 1024 * 2; // Set to your desired width
-    var texheight = Math.ceil((2 * vertexCount) / texwidth); // Set to your desired height
+    // var texwidth = 1024 * 2; // Set to your desired width
+    // var texheight = Math.ceil((2 * vertexCount) / texwidth); // Set to your desired height
+
+    // var float_per_row = Math.ceil(rowLength / 4);  
+    // the smallest number > rowLength that can be divided by 4
+
+    var float_per_row = rowLength / 4;
+    // var float_per_row = 8;
+    float_per_row = float_per_row % 4 == 0 ? float_per_row : (Math.floor(float_per_row / 4) + 1) * 4;
+    var byte_per_row = float_per_row * 4;
+
+
+    
+    var texwidth = 1024 * float_per_row / 4; // Set to your desired width
+    var texheight = Math.ceil((float_per_row / 4 * vertexCount) / texwidth); // Set to your desired height
 
     // var texdata = new Uint32Array(texwidth * texheight * 4); // 4 components per pixel (RGBA)
-    var texdata = new Uint32Array(texwidth * texheight * rowLength / 4 / 2); // 4 components per pixel (RGBA)
+    var texdata = new Uint32Array(texwidth * texheight * 4); // 4 components per pixel (RGBA)
 
     var texdata_c = new Uint8Array(texdata.buffer);
     var texdata_f = new Float32Array(texdata.buffer);
@@ -237,32 +264,35 @@ function createWorker(self) {
     // With a little bit more foresight perhaps this texture file
     // should have been the native format as it'd be very easy to
     // load it into webgl.
-    var byte_per_row = rowLength; 
-    var float_per_row = rowLength / 4;  
+    console.log("ori_float_per_row: ", ori_float_per_row);
+    console.log("ori_byte_per_row: ", ori_byte_per_row);
+    console.log("float_per_row: ", float_per_row);
+    console.log("textwidth: ", texwidth);
+    console.log("textheight: ", texheight);
 
     for (let i = 0; i < vertexCount; i++) {
       // x, y, z
-      texdata_f[float_per_row * i + 0] = f_buffer[float_per_row * i + 0];
-      texdata_f[float_per_row * i + 1] = f_buffer[float_per_row * i + 1];
-      texdata_f[float_per_row * i + 2] = f_buffer[float_per_row * i + 2];
+      texdata_f[float_per_row * i + 0] = f_buffer[ori_float_per_row * i + 0];
+      texdata_f[float_per_row * i + 1] = f_buffer[ori_float_per_row * i + 1];
+      texdata_f[float_per_row * i + 2] = f_buffer[ori_float_per_row * i + 2];
 
       // r, g, b, a
-      texdata_c[4 * (float_per_row * i + 7) + 0] = u_buffer[byte_per_row * i + 24 + 0];
-      texdata_c[4 * (float_per_row * i + 7) + 1] = u_buffer[byte_per_row * i + 24 + 1];
-      texdata_c[4 * (float_per_row * i + 7) + 2] = u_buffer[byte_per_row * i + 24 + 2];
-      texdata_c[4 * (float_per_row * i + 7) + 3] = u_buffer[byte_per_row * i + 24 + 3];
+      texdata_c[4 * (float_per_row * i + 7) + 0] = u_buffer[ori_byte_per_row * i + 24 + 0];
+      texdata_c[4 * (float_per_row * i + 7) + 1] = u_buffer[ori_byte_per_row * i + 24 + 1];
+      texdata_c[4 * (float_per_row * i + 7) + 2] = u_buffer[ori_byte_per_row * i + 24 + 2];
+      texdata_c[4 * (float_per_row * i + 7) + 3] = u_buffer[ori_byte_per_row * i + 24 + 3];
 
       // quaternions
       let scale = [
-        f_buffer[float_per_row * i + 3 + 0],
-        f_buffer[float_per_row * i + 3 + 1],
-        f_buffer[float_per_row * i + 3 + 2],
+        f_buffer[ori_float_per_row * i + 3 + 0],
+        f_buffer[ori_float_per_row * i + 3 + 1],
+        f_buffer[ori_float_per_row * i + 3 + 2],
       ];
       let rot = [
-        (u_buffer[byte_per_row * i + 28 + 0] - 128) / 128,
-        (u_buffer[byte_per_row * i + 28 + 1] - 128) / 128,
-        (u_buffer[byte_per_row * i + 28 + 2] - 128) / 128,
-        (u_buffer[byte_per_row * i + 28 + 3] - 128) / 128,
+        (u_buffer[ori_byte_per_row * i + 28 + 0] - 128) / 128,
+        (u_buffer[ori_byte_per_row * i + 28 + 1] - 128) / 128,
+        (u_buffer[ori_byte_per_row * i + 28 + 2] - 128) / 128,
+        (u_buffer[ori_byte_per_row * i + 28 + 3] - 128) / 128,
       ];
 
       // Compute the matrix product of S and R (M = S * R)
@@ -294,10 +324,17 @@ function createWorker(self) {
       texdata[float_per_row * i + 6] = packHalf2x16(4 * sigma[4], 4 * sigma[5]);
 
 
-      for (var j = 0; j < ((sh_order + 1)**2) * 3; j++) {
-        texdata_f[float_per_row * i + 8 + j] = f_buffer[float_per_row * i + 8 + j];
+      if (sh_order > 0) {
+        for (var j = 0; j < ((sh_order + 1)**2 - 1) * 4; j++) {
+          texdata_f[float_per_row * i + 8 + j] = f_buffer[ori_float_per_row * i + 8 + j];
+        }
       }
     }
+
+    // print the first 10 rows
+    // for (let i = 0; i < 10; i++) {
+    //   console.log(texdata.slice(i * float_per_row, i * float_per_row + 10));
+    // }
 
     self.postMessage({ texdata, texwidth, texheight }, [texdata.buffer]);
   }
@@ -324,9 +361,9 @@ function createWorker(self) {
     let sizeList = new Int32Array(vertexCount);
     for (let i = 0; i < vertexCount; i++) {
       let depth =
-        ((viewProj[2] * f_buffer[8 * i + 0] +
-          viewProj[6] * f_buffer[8 * i + 1] +
-          viewProj[10] * f_buffer[8 * i + 2]) *
+        ((viewProj[2] * f_buffer[ori_float_per_row * i + 0] +
+          viewProj[6] * f_buffer[ori_float_per_row * i + 1] +
+          viewProj[10] * f_buffer[ori_float_per_row * i + 2]) *
           4096) |
         0;
       sizeList[i] = depth;
@@ -431,11 +468,13 @@ function createWorker(self) {
     // RGBA - colors (uint8)
     // IJKL - quaternion/rot (uint8)
     // sh features - (Float32)  (sh_order + 1) ** 2 * 3 * 4  
-    const sh_order = 3;
-    const rowLength = 3 * 4 + 3 * 4 + 4 + 4 + ((sh_order + 1)**2) * 3 * 4;
+    // const rowLength = 3 * 4 + 3 * 4 + 4 + 4 + ((sh_order + 1)**2 - 1) * 3 * 4;
     const buffer = new ArrayBuffer(rowLength * vertexCount);
 
+ 
+
     console.time("build buffer");
+    console.log("rowLength: ", rowLength);
     for (let j = 0; j < vertexCount; j++) {
       row = sizeIndex[j];
       
@@ -452,7 +491,7 @@ function createWorker(self) {
         4
       );
 
-      const sh_feature = new Float32Array(buffer, j * rowLength + 4 * 3 + 4 * 3 + 4 + 4, ((sh_order + 1)**2) * 3);
+      const sh_feature = new Float32Array(buffer, j * rowLength + 4 * 3 + 4 * 3 + 4 + 4, ((sh_order + 1)**2 - 1) * 4);
 
       if (types["scale_0"]) {
         const qlen = Math.sqrt(
@@ -491,9 +530,9 @@ function createWorker(self) {
         rgba[1] = (0.5 + SH_C0 * attrs.f_dc_1) * 255;
         rgba[2] = (0.5 + SH_C0 * attrs.f_dc_2) * 255;
 
-        sh_feature[0] = attrs.f_dc_0;
-        sh_feature[1] = attrs.f_dc_1;
-        sh_feature[2] = attrs.f_dc_2;
+        // sh_feature[0] = attrs.f_dc_0;
+        // sh_feature[1] = attrs.f_dc_1;
+        // sh_feature[2] = attrs.f_dc_2;
       } else {
         rgba[0] = attrs.red;
         rgba[1] = attrs.green;
@@ -502,8 +541,11 @@ function createWorker(self) {
       }
 
       if (types["f_rest_0"]) {
-        for (let i = 0; i < ((sh_order + 1)**2)*3-3; i++) {
-          sh_feature[i+3] = attrs[`f_rest_${i}`];
+        for (let i = 0; i < ((sh_order + 1)**2-1); i++) {
+          sh_feature[4*i] = attrs[`f_rest_${3*i}`];
+          sh_feature[4*i+1] = attrs[`f_rest_${3*i+1}`];
+          sh_feature[4*i+2] = attrs[`f_rest_${3*i+2}`];
+          sh_feature[4*i+3] = 0;
         }
       }     
 
@@ -567,8 +609,40 @@ in int index;
 out vec4 vColor;
 out vec2 vPosition;
 
+
+float C0 = 0.28209479177387814;
+float C1 = 0.4886025119029199;
+float C2[5] = float[](
+    1.0925484305920792,
+    -1.0925484305920792,
+    0.31539156525252005,
+    -1.0925484305920792,
+    0.5462742152960396
+);
+float C3[7] = float[](
+    -0.5900435899266435,
+    2.890611442640554,
+    -0.4570457994644658,
+    0.3731763325901154,
+    -0.4570457994644658,
+    1.445305721320277,
+    -0.5900435899266435
+);
+float C4[9] = float[](
+    2.5033429417967046,
+    -1.7701307697799304,
+    0.9461746957575601,
+    -0.6690465435572892,
+    0.10578554691520431,
+    -0.6690465435572892,
+    0.47308734787878004,
+    -1.7701307697799304,
+    0.6258357354491761
+);
+
+
 void main () {
-    uvec4 cen = texelFetch(u_texture, ivec2((uint(index) & 0x3ffu) << 1, uint(index) >> 10), 0);
+    uvec4 cen = texelFetch(u_texture, ivec2((uint(index) & 0x3ffu) * ${float_per_row/4}u, uint(index) >> 10), 0);
     vec4 cam = view * vec4(uintBitsToFloat(cen.xyz), 1);
     vec4 pos2d = projection * cam;
 
@@ -578,7 +652,7 @@ void main () {
         return;
     }
 
-    uvec4 cov = texelFetch(u_texture, ivec2(((uint(index) & 0x3ffu) << 1) | 1u, uint(index) >> 10), 0);
+    uvec4 cov = texelFetch(u_texture, ivec2(((uint(index) & 0x3ffu) * ${float_per_row/4}u + 1u), uint(index) >> 10), 0);
     vec2 u1 = unpackHalf2x16(cov.x), u2 = unpackHalf2x16(cov.y), u3 = unpackHalf2x16(cov.z);
     mat3 Vrk = mat3(u1.x, u1.y, u2.x, u1.y, u2.y, u3.x, u2.x, u3.x, u3.y);
 
@@ -600,7 +674,72 @@ void main () {
     vec2 majorAxis = min(sqrt(2.0 * lambda1), 1024.0) * diagonalVector;
     vec2 minorAxis = min(sqrt(2.0 * lambda2), 1024.0) * vec2(diagonalVector.y, -diagonalVector.x);
 
-    vColor = clamp(pos2d.z/pos2d.w+1.0, 0.0, 1.0) * vec4((cov.w) & 0xffu, (cov.w >> 8) & 0xffu, (cov.w >> 16) & 0xffu, (cov.w >> 24) & 0xffu) / 255.0;
+    
+    vec3 splat_pos = uintBitsToFloat(cen.xyz);
+    vec3 cam_pos = (inverse(view) * vec4(0.0, 0.0, 0.0, 1.0)).xyz;
+    vec3 dirs = normalize(splat_pos - cam_pos);
+
+    vec3 diffuse = vec3((cov.w) & 0xffu, (cov.w >> 8) & 0xffu, (cov.w >> 16) & 0xffu) / 255.0;
+    vec3 dep = vec3(0.0, 0.0, 0.0);
+
+    vec4 sh_coef; 
+    uint offset = 2u;
+
+
+    if (${sh_order}u > 0u) {
+        float x = dirs.x;
+        float y = dirs.y;
+        float z = dirs.z;
+        float xx = x * x;
+        float yy = y * y;
+        float zz = z * z;
+        float xy = x * y;
+        float yz = y * z;
+        float xz = x * z;
+
+
+        float coefs[24] = float[](
+          // SH_1
+          -C1 * y,
+          C1 * z,
+          -C1 * x,
+          // SH_2
+          + C2[0] * xy, 
+          + C2[1] * yz, 
+          + C2[2] * (2.0 * zz - xx - yy), 
+          + C2[3] * xz, 
+          + C2[4] * (xx - yy), 
+          // SH_3,
+          + C3[0] * y * (3.0 * xx - yy),
+          + C3[1] * xy * z, 
+          + C3[2] * y * (4.0 * zz - xx - yy), 
+          + C3[3] * z * (2.0 * zz - 3.0 * xx - 3.0 * yy), 
+          + C3[4] * x * (4.0 * zz - xx - yy), 
+          + C3[5] * z * (xx - yy), 
+          + C3[6] * x * (xx - 3.0 * yy),
+          // SH_4
+          + C4[0] * xy * (xx - yy),
+          + C4[1] * yz * (3.0 * xx - yy),
+          + C4[2] * xy * (7.0 * zz - 1.0),
+          + C4[3] * yz * (7.0 * zz - 3.0), 
+          + C4[4] * (zz * (35.0 * zz - 30.0) + 3.0),
+          + C4[5] * xz * (7.0 * zz - 3.0),
+          + C4[6] * (xx - yy) * (7.0 * zz - 1.0), 
+          + C4[7] * xz * (xx - 3.0 * yy), 
+          + C4[8] * (xx * (xx - 3.0 * yy) - yy * (3.0 * xx - yy))
+      );
+
+      for (uint i = 0u; i < (${sh_order}u + 1u) * (${sh_order}u + 1u) - 1u; i++) {
+          sh_coef = uintBitsToFloat(texelFetch(u_texture, ivec2(((uint(index) & 0x3ffu) * ${float_per_row/4}u + offset), uint(index) >> 10), 0)); 
+          offset = offset + 1u;
+          dep = dep + coefs[i] * sh_coef.xyz; 
+      }
+    }
+
+    vColor = clamp(pos2d.z/pos2d.w+1.0, 0.0, 1.0)  * vec4(diffuse , float((cov.w >> 24) & 0xffu) / 255.0); 
+
+    // vColor = clamp(pos2d.z/pos2d.w+1.0, 0.0, 1.0) * vec4((cov.w) & 0xffu, (cov.w >> 8) & 0xffu, (cov.w >> 16) & 0xffu, (cov.w >> 24) & 0xffu) / 255.0;
+
     vPosition = position;
 
     vec2 vCenter = vec2(pos2d) / pos2d.w;
@@ -726,8 +865,8 @@ async function main() {
     throw new Error(req.status + " Unable to load " + req.url);
 
   // const rowLength = 3 * 4 + 3 * 4 + 4 + 4;
-  const sh_order = 3;
   const rowLength = 3 * 4 + 3 + 3 * 4 + ((sh_order+1)**2 - 1) * 3 * 4 + 8 * 4 + 2; // for our format
+  // const rowLength = 3 * 4 + 3 + 3 * 4 + 45 * 4 + 8 * 4 + 2; // for our format
   const reader = req.body.getReader();
   let splatData = new Uint8Array(req.headers.get("content-length"));
 
