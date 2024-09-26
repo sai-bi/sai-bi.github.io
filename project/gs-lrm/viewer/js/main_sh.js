@@ -251,7 +251,7 @@ function createWorker(self) {
 
 
     
-    var texwidth = 1024 * float_per_row / 4; // Set to your desired width
+    var texwidth = 256 * float_per_row / 4; // Set to your desired width
     var texheight = Math.ceil((float_per_row / 4 * vertexCount) / texwidth); // Set to your desired height
 
     // var texdata = new Uint32Array(texwidth * texheight * 4); // 4 components per pixel (RGBA)
@@ -490,7 +490,8 @@ function createWorker(self) {
         j * rowLength + 4 * 3 + 4 * 3 + 4,
         4
       );
-
+      
+      // here the sh coef is changed from 3 to 4 to make it easier to access in shader 
       const sh_feature = new Float32Array(buffer, j * rowLength + 4 * 3 + 4 * 3 + 4 + 4, ((sh_order + 1)**2 - 1) * 4);
 
       if (types["scale_0"]) {
@@ -546,6 +547,13 @@ function createWorker(self) {
           sh_feature[4*i+1] = attrs[`f_rest_${3*i+1}`];
           sh_feature[4*i+2] = attrs[`f_rest_${3*i+2}`];
           sh_feature[4*i+3] = 0;
+        }
+
+        if (j == 0) {
+          console.log(attrs.f_rest_3);
+          console.log(attrs.f_rest_4);
+          console.log(attrs.f_rest_5);
+          console.log("sh_feature: ", sh_feature);
         }
       }     
 
@@ -642,7 +650,9 @@ float C4[9] = float[](
 
 
 void main () {
-    uvec4 cen = texelFetch(u_texture, ivec2((uint(index) & 0x3ffu) * ${float_per_row/4}u, uint(index) >> 10), 0);
+
+    uint temp = 255u; 
+    uvec4 cen = texelFetch(u_texture, ivec2((uint(index) & temp) * ${float_per_row/4}u, uint(index) >> 8), 0);
     vec4 cam = view * vec4(uintBitsToFloat(cen.xyz), 1);
     vec4 pos2d = projection * cam;
 
@@ -652,7 +662,9 @@ void main () {
         return;
     }
 
-    uvec4 cov = texelFetch(u_texture, ivec2(((uint(index) & 0x3ffu) * ${float_per_row/4}u + 1u), uint(index) >> 10), 0);
+    // uint temp = 0x3ffu;
+
+    uvec4 cov = texelFetch(u_texture, ivec2(((uint(index) & temp) * ${float_per_row/4}u + 1u), uint(index) >> 8), 0);
     vec2 u1 = unpackHalf2x16(cov.x), u2 = unpackHalf2x16(cov.y), u3 = unpackHalf2x16(cov.z);
     mat3 Vrk = mat3(u1.x, u1.y, u2.x, u1.y, u2.y, u3.x, u2.x, u3.x, u3.y);
 
@@ -675,11 +687,18 @@ void main () {
     vec2 minorAxis = min(sqrt(2.0 * lambda2), 1024.0) * vec2(diagonalVector.y, -diagonalVector.x);
 
     
-    vec3 splat_pos = uintBitsToFloat(cen.xyz);
+    vec3 splat_pos = vec3(uintBitsToFloat(cen.xyz));
     vec3 cam_pos = (inverse(view) * vec4(0.0, 0.0, 0.0, 1.0)).xyz;
+    // mat3 viewModelDir = mat3(view);
+    // vec3 cam_pos = -transpose(viewModelDir) * view[3].xyz;
+
+
+
     vec3 dirs = normalize(splat_pos - cam_pos);
 
-    vec3 diffuse = vec3((cov.w) & 0xffu, (cov.w >> 8) & 0xffu, (cov.w >> 16) & 0xffu) / 255.0;
+    // vec3 diffuse = clamp(pos2d.z/pos2d.w+1.0, 0.0, 1.0)  * vec3((cov.w) & 0xffu, (cov.w >> 8) & 0xffu, (cov.w >> 16) & 0xffu) / 255.0;
+
+    vColor = clamp(pos2d.z/pos2d.w+1.0, 0.0, 1.0) * vec4((cov.w) & 0xffu, (cov.w >> 8) & 0xffu, (cov.w >> 16) & 0xffu, (cov.w >> 24) & 0xffu) / 255.0;
     vec3 dep = vec3(0.0, 0.0, 0.0);
 
     vec4 sh_coef; 
@@ -729,15 +748,23 @@ void main () {
           + C4[8] * (xx * (xx - 3.0 * yy) - yy * (3.0 * xx - yy))
       );
 
+      
       for (uint i = 0u; i < (${sh_order}u + 1u) * (${sh_order}u + 1u) - 1u; i++) {
-          sh_coef = uintBitsToFloat(texelFetch(u_texture, ivec2(((uint(index) & 0x3ffu) * ${float_per_row/4}u + offset), uint(index) >> 10), 0)); 
+          sh_coef = uintBitsToFloat(texelFetch(u_texture, ivec2(2u, 0u), 0)); 
+          // sh_coef = uintBitsToFloat(texelFetch(u_texture, ivec2(((uint(index) & temp) * ${float_per_row/4}u + offset), uint(index) >> 8), 0)); 
           offset = offset + 1u;
-          dep = dep + coefs[i] * sh_coef.xyz; 
+          dep = dep + coefs[i] * sh_coef.xyz;
+          break;
       }
     }
 
-    vColor = clamp(pos2d.z/pos2d.w+1.0, 0.0, 1.0)  * vec4(diffuse , float((cov.w >> 24) & 0xffu) / 255.0); 
-
+    // vColor = clamp(pos2d.z/pos2d.w+1.0, 0.0, 1.0)  * vec4(diffuse + dep, float((cov.w >> 24) & 0xffu) / 255.0); 
+    // vColor = clamp(pos2d.z/pos2d.w+1.0, 0.0, 1.0)  * vec4(diffuse + dep, float((cov.w >> 24) & 0xffu) / 255.0); 
+    // vColor = diffuse + dep;
+    // vColor.rgb = vColor.rgb + dep;
+    vColor.rgb = clamp(sh_coef.xyz + 0.5, 0.0, 1.0);  
+    vColor.w = 1.0;
+ 
     // vColor = clamp(pos2d.z/pos2d.w+1.0, 0.0, 1.0) * vec4((cov.w) & 0xffu, (cov.w >> 8) & 0xffu, (cov.w >> 16) & 0xffu, (cov.w >> 24) & 0xffu) / 255.0;
 
     vPosition = position;
