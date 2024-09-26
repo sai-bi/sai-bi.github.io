@@ -176,7 +176,9 @@ function createWorker(self) {
   // XYZ - Scale (Float32)
   // RGBA - colors (uint8)
   // IJKL - quaternion/rot (uint8)
-  const rowLength = 3 * 4 + 3 * 4 + 4 + 4;
+  const sh_order = 3;
+  // const rowLength = 3 * 4 + 3 * 4 + 4 + 4;
+  const rowLength = 3 * 4 + 3 * 4 + 4 + 4 + ((sh_order + 1)**2 - 1) * 3 * 4;
   let lastProj = [];
   let depthIndex = new Uint32Array();
   let lastVertexCount = 0;
@@ -224,7 +226,10 @@ function createWorker(self) {
 
     var texwidth = 1024 * 2; // Set to your desired width
     var texheight = Math.ceil((2 * vertexCount) / texwidth); // Set to your desired height
-    var texdata = new Uint32Array(texwidth * texheight * 4); // 4 components per pixel (RGBA)
+
+    // var texdata = new Uint32Array(texwidth * texheight * 4); // 4 components per pixel (RGBA)
+    var texdata = new Uint32Array(texwidth * texheight * rowLength / 4 / 2); // 4 components per pixel (RGBA)
+
     var texdata_c = new Uint8Array(texdata.buffer);
     var texdata_f = new Float32Array(texdata.buffer);
 
@@ -232,29 +237,32 @@ function createWorker(self) {
     // With a little bit more foresight perhaps this texture file
     // should have been the native format as it'd be very easy to
     // load it into webgl.
+    var byte_per_row = rowLength; 
+    var float_per_row = rowLength / 4;  
+
     for (let i = 0; i < vertexCount; i++) {
       // x, y, z
-      texdata_f[8 * i + 0] = f_buffer[8 * i + 0];
-      texdata_f[8 * i + 1] = f_buffer[8 * i + 1];
-      texdata_f[8 * i + 2] = f_buffer[8 * i + 2];
+      texdata_f[float_per_row * i + 0] = f_buffer[float_per_row * i + 0];
+      texdata_f[float_per_row * i + 1] = f_buffer[float_per_row * i + 1];
+      texdata_f[float_per_row * i + 2] = f_buffer[float_per_row * i + 2];
 
       // r, g, b, a
-      texdata_c[4 * (8 * i + 7) + 0] = u_buffer[32 * i + 24 + 0];
-      texdata_c[4 * (8 * i + 7) + 1] = u_buffer[32 * i + 24 + 1];
-      texdata_c[4 * (8 * i + 7) + 2] = u_buffer[32 * i + 24 + 2];
-      texdata_c[4 * (8 * i + 7) + 3] = u_buffer[32 * i + 24 + 3];
+      texdata_c[4 * (float_per_row * i + 7) + 0] = u_buffer[byte_per_row * i + 24 + 0];
+      texdata_c[4 * (float_per_row * i + 7) + 1] = u_buffer[byte_per_row * i + 24 + 1];
+      texdata_c[4 * (float_per_row * i + 7) + 2] = u_buffer[byte_per_row * i + 24 + 2];
+      texdata_c[4 * (float_per_row * i + 7) + 3] = u_buffer[byte_per_row * i + 24 + 3];
 
       // quaternions
       let scale = [
-        f_buffer[8 * i + 3 + 0],
-        f_buffer[8 * i + 3 + 1],
-        f_buffer[8 * i + 3 + 2],
+        f_buffer[float_per_row * i + 3 + 0],
+        f_buffer[float_per_row * i + 3 + 1],
+        f_buffer[float_per_row * i + 3 + 2],
       ];
       let rot = [
-        (u_buffer[32 * i + 28 + 0] - 128) / 128,
-        (u_buffer[32 * i + 28 + 1] - 128) / 128,
-        (u_buffer[32 * i + 28 + 2] - 128) / 128,
-        (u_buffer[32 * i + 28 + 3] - 128) / 128,
+        (u_buffer[byte_per_row * i + 28 + 0] - 128) / 128,
+        (u_buffer[byte_per_row * i + 28 + 1] - 128) / 128,
+        (u_buffer[byte_per_row * i + 28 + 2] - 128) / 128,
+        (u_buffer[byte_per_row * i + 28 + 3] - 128) / 128,
       ];
 
       // Compute the matrix product of S and R (M = S * R)
@@ -281,9 +289,14 @@ function createWorker(self) {
         M[2] * M[2] + M[5] * M[5] + M[8] * M[8],
       ];
 
-      texdata[8 * i + 4] = packHalf2x16(4 * sigma[0], 4 * sigma[1]);
-      texdata[8 * i + 5] = packHalf2x16(4 * sigma[2], 4 * sigma[3]);
-      texdata[8 * i + 6] = packHalf2x16(4 * sigma[4], 4 * sigma[5]);
+      texdata[float_per_row * i + 4] = packHalf2x16(4 * sigma[0], 4 * sigma[1]);
+      texdata[float_per_row * i + 5] = packHalf2x16(4 * sigma[2], 4 * sigma[3]);
+      texdata[float_per_row * i + 6] = packHalf2x16(4 * sigma[4], 4 * sigma[5]);
+
+
+      for (var j = 0; j < ((sh_order + 1)**2) * 3; j++) {
+        texdata_f[float_per_row * i + 8 + j] = f_buffer[float_per_row * i + 8 + j];
+      }
     }
 
     self.postMessage({ texdata, texwidth, texheight }, [texdata.buffer]);
@@ -417,13 +430,15 @@ function createWorker(self) {
     // XYZ - Scale (Float32)
     // RGBA - colors (uint8)
     // IJKL - quaternion/rot (uint8)
-    const rowLength = 3 * 4 + 3 * 4 + 4 + 4;
+    // sh features - (Float32)  (sh_order + 1) ** 2 * 3 * 4  
+    const sh_order = 3;
+    const rowLength = 3 * 4 + 3 * 4 + 4 + 4 + ((sh_order + 1)**2) * 3 * 4;
     const buffer = new ArrayBuffer(rowLength * vertexCount);
 
     console.time("build buffer");
     for (let j = 0; j < vertexCount; j++) {
       row = sizeIndex[j];
-
+      
       const position = new Float32Array(buffer, j * rowLength, 3);
       const scales = new Float32Array(buffer, j * rowLength + 4 * 3, 3);
       const rgba = new Uint8ClampedArray(
@@ -436,6 +451,8 @@ function createWorker(self) {
         j * rowLength + 4 * 3 + 4 * 3 + 4,
         4
       );
+
+      const sh_feature = new Float32Array(buffer, j * rowLength + 4 * 3 + 4 * 3 + 4 + 4, ((sh_order + 1)**2) * 3);
 
       if (types["scale_0"]) {
         const qlen = Math.sqrt(
@@ -473,11 +490,23 @@ function createWorker(self) {
         rgba[0] = (0.5 + SH_C0 * attrs.f_dc_0) * 255;
         rgba[1] = (0.5 + SH_C0 * attrs.f_dc_1) * 255;
         rgba[2] = (0.5 + SH_C0 * attrs.f_dc_2) * 255;
+
+        sh_feature[0] = attrs.f_dc_0;
+        sh_feature[1] = attrs.f_dc_1;
+        sh_feature[2] = attrs.f_dc_2;
       } else {
         rgba[0] = attrs.red;
         rgba[1] = attrs.green;
         rgba[2] = attrs.blue;
+        console.log("something is wrong!")
       }
+
+      if (types["f_rest_0"]) {
+        for (let i = 0; i < ((sh_order + 1)**2)*3-3; i++) {
+          sh_feature[i+3] = attrs[`f_rest_${i}`];
+        }
+      }     
+
       if (types["opacity"]) {
         rgba[3] = (1 / (1 + Math.exp(-attrs.opacity))) * 255;
       } else {
@@ -697,7 +726,8 @@ async function main() {
     throw new Error(req.status + " Unable to load " + req.url);
 
   // const rowLength = 3 * 4 + 3 * 4 + 4 + 4;
-  const rowLength = 3 * 4 + 3 + 3 * 4 + 72 * 4 + 8 * 4 + 2; // for our format
+  const sh_order = 3;
+  const rowLength = 3 * 4 + 3 + 3 * 4 + ((sh_order+1)**2 - 1) * 3 * 4 + 8 * 4 + 2; // for our format
   const reader = req.body.getReader();
   let splatData = new Uint8Array(req.headers.get("content-length"));
 
