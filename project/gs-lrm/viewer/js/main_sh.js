@@ -750,20 +750,20 @@ void main () {
 
       
       for (uint i = 0u; i < (${sh_order}u + 1u) * (${sh_order}u + 1u) - 1u; i++) {
-          sh_coef = uintBitsToFloat(texelFetch(u_texture, ivec2(2u, 0u), 0)); 
-          // sh_coef = uintBitsToFloat(texelFetch(u_texture, ivec2(((uint(index) & temp) * ${float_per_row/4}u + offset), uint(index) >> 8), 0)); 
+          // sh_coef = uintBitsToFloat(texelFetch(u_texture, ivec2(2u, 0u), 0)); 
+          sh_coef = uintBitsToFloat(texelFetch(u_texture, ivec2(((uint(index) & temp) * ${float_per_row/4}u + offset), uint(index) >> 8), 0)); 
           offset = offset + 1u;
           dep = dep + coefs[i] * sh_coef.xyz;
-          break;
+          // break;
       }
     }
 
     // vColor = clamp(pos2d.z/pos2d.w+1.0, 0.0, 1.0)  * vec4(diffuse + dep, float((cov.w >> 24) & 0xffu) / 255.0); 
     // vColor = clamp(pos2d.z/pos2d.w+1.0, 0.0, 1.0)  * vec4(diffuse + dep, float((cov.w >> 24) & 0xffu) / 255.0); 
     // vColor = diffuse + dep;
-    // vColor.rgb = vColor.rgb + dep;
-    vColor.rgb = clamp(sh_coef.xyz + 0.5, 0.0, 1.0);  
-    vColor.w = 1.0;
+    vColor.rgb = vColor.rgb + dep;
+    // vColor.rgb = clamp(sh_coef.xyz + 0.5, 0.0, 1.0);  
+    // vColor.w = 1.0;
  
     // vColor = clamp(pos2d.z/pos2d.w+1.0, 0.0, 1.0) * vec4((cov.w) & 0xffu, (cov.w >> 8) & 0xffu, (cov.w >> 16) & 0xffu, (cov.w >> 24) & 0xffu) / 255.0;
 
