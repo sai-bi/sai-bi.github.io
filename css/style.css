@@ -280,3 +280,29 @@ img.top {
     overflow: hidden; 
 	
 }
+
+
+<div class="pubwrap">
+  <div class="row">
+    <div class="col-md-5">
+      <div class="pubimg">
+        <img src="./img/neural_gaffer.png"  />
+      </div>
+    </div>
+    <div class="col-md-7">
+      <div class="pub">
+        <div class="pubt"> Neural Gaffer: Relighting Any Object via Diffusion
+        <div class="puba">
+           Haian Jin, Yuan Li, Fujun Luan, Yuanbo Xiangli, <b>Sai Bi</b>, Kai Zhang, Zexiang Xu, Jin Sun, Noah Snavely
+        </div>
+        <div class="pubv">NeurIPS 2024</div>
+        <div>
+          <a href='https://arxiv.org/abs/2406.07520'>Paper </a> |
+          <a href="https://neural-gaffer.github.io/">
+            Project page</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+</div>  
